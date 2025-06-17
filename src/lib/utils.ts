@@ -1,0 +1,13 @@
+export function formatDate(date: Date | string) {
+  const d = new Date(date);
+  return d.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+}
+
+export function truncate(text: string, length: number) {
+  if (text.length <= length) return text;
+  return text.substring(0, length) + '...';
+}
