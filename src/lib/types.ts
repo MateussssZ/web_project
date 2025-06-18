@@ -30,3 +30,11 @@ export interface AuthResponse extends ApiResponse<{
   user: User;
   token: string;
 }> {}
+
+export interface ArticleCreatedEvent {
+  id: string;
+  title: string;
+  authorName: string;
+  createdAt: Date;
+  url: string;
+}
