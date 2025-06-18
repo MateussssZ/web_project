@@ -8,6 +8,7 @@ const ArticleForm: React.FC<{ article?: Article; onSubmit?: (data: { title: stri
 }) => {
     const [title, setTitle] = useState(article?.title || '');
     const [content, setContent] = useState(article?.content || '');
+    const router = useRouter();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -31,6 +32,23 @@ const ArticleForm: React.FC<{ article?: Article; onSubmit?: (data: { title: stri
                 gap: 18,
             }}
         >
+            <button
+                type="button"
+                onClick={() => router.back()}
+                style={{
+                    marginBottom: 16,
+                    background: 'none',
+                    border: 'none',
+                    color: '#0070f3',
+                    fontWeight: 500,
+                    fontSize: 15,
+                    cursor: 'pointer',
+                    padding: 0,
+                    textDecoration: 'underline',
+                }}
+            >
+                ← Назад
+            </button>
             <div>
                 <label htmlFor="title" style={{ fontWeight: 500, display: 'block', marginBottom: 6 }}>
                     Title
