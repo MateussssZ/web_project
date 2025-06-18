@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { Article, ArticlesResponse, ArticleResponse, DeleteArticleResponse } from '@/lib/types';
+import { bot } from '@/bot/bot.init';
 
 // Mock database
 let articles: Article[] = [
@@ -66,9 +67,50 @@ export async function POST(request: Request) {
   };
   
   articles.unshift(newArticle);
+
+  // Send notification to Telegram bot subscribers
+  if (bot) {
+    try {
+      await bot.notifyNewArticle({
+        title: newArticle.title,
+        createdAt: newArticle.createdAt,
+        url: `${process.env.NEXT_PUBLIC_WEB_APP_URL}/article/${newArticle.id}`
+      });
+    } catch (error) {
+      console.error('Failed to send Telegram notification:', error);
+    }
+  }
   
   return NextResponse.json<ArticleResponse>({
     success: true,
     data: newArticle,
+  });
+}
+
+export async function DELETE(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const id = searchParams.get('id');
+  
+  if (!id) {
+    return NextResponse.json<DeleteArticleResponse>({
+      success: false,
+      error: 'Article ID is required',
+    }, { status: 400 });
+  }
+  
+  const articleIndex = articles.findIndex(article => article.id === id);
+  
+  if (articleIndex === -1) {
+    return NextResponse.json<DeleteArticleResponse>({
+      success: false,
+      error: 'Article not found',
+    }, { status: 404 });
+  }
+  
+  articles.splice(articleIndex, 1);
+  
+  return NextResponse.json<DeleteArticleResponse>({
+    success: true,
+    data: { id },
   });
 }
