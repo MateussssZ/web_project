@@ -1,8 +1,12 @@
 import { Database } from 'sqlite3';
 import { open } from 'sqlite';
+import fs from 'fs';
+import path from 'path';
+
+const dbPath = process.env.SQLITE_PATH || '/data/database.sqlite';
 
 const dbPromise = open({
-  filename: './database.sqlite',
+  filename: dbPath,
   driver: Database
 });
 
@@ -12,19 +16,18 @@ export const getDb = async () => {
 
 export const initializeDb = async () => {
   const db = await getDb();
-  await db.exec(`
-    CREATE TABLE IF NOT EXISTS articles (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      title TEXT NOT NULL,
-      content TEXT NOT NULL,
-      created_at TEXT NOT NULL
-    )
-  `);
+  // Читаем схему из db.sql
+  const schemaPath = path.resolve(process.cwd(), 'db.sql');
+  const schema = fs.readFileSync(schemaPath, 'utf-8');
+  await db.exec(schema);
 };
 
-export const createArticle = async (title: string, content: string) => {
+export const createArticle = async (title: string, content: string, userId: number) => {
   const db = await getDb();
-  const result = await db.run('INSERT INTO articles (title, content) VALUES (?, ?)', [title, content]);
+  const result = await db.run(
+    'INSERT INTO articles (title, content, user_id) VALUES (?, ?, ?)',
+    [title, content, userId]
+  );
   return result.lastID;
 };
 
