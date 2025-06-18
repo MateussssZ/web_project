@@ -28,8 +28,6 @@ const NewArticle = () => {
     } catch (error) {
       console.error('Failed to send Telegram notification:', error);
     }
-  } else{
-    console.log("No bot")
   }
       router.push('/');
     } else {
