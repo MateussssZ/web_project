@@ -1,11 +1,11 @@
-// src/lib/auth.ts
 'use client'
 
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { User } from './types'
 
-interface AuthContextType {
+// 1. Определяем интерфейс для значения контекста
+interface AuthContextValue {
   user: User | null
   isLoading: boolean
   login: (email: string, password: string) => Promise<void>
@@ -13,8 +13,10 @@ interface AuthContextType {
   register: (name: string, email: string, password: string) => Promise<void>
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined)
+// 2. Создаем контекст с явным указанием типа
+const AuthContext = createContext<AuthContextValue | null>(null)
 
+// 3. Создаем провайдер
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -28,14 +30,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         credentials: 'include',
       })
 
-      if (response.ok) {
-        const data = await response.json()
-        if (data?.user) {
-          setUser(data.user)
-          return
-        }
+      const data = await response.json()
+      if (response.ok && data.user) {
+        setUser(data.user)
+      } else {
+        setUser(null)
       }
-      setUser(null)
     } catch (error) {
       console.error('Failed to fetch user', error)
       setUser(null)
@@ -48,34 +48,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     fetchUser()
   }, [fetchUser])
 
-  const login = useCallback(
-    async (email: string, password: string) => {
-      try {
-        setIsLoading(true)
-        const response = await fetch('/api/auth/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ email, password }),
-          credentials: 'include',
-        })
+  const login = useCallback(async (email: string, password: string) => {
+    try {
+      setIsLoading(true)
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+        credentials: 'include',
+      })
 
-        if (!response.ok) {
-          throw new Error('Login failed')
-        }
-
-        await fetchUser()
-        router.push('/')
-      } catch (error) {
-        console.error('Login error:', error)
-        throw error
-      } finally {
-        setIsLoading(false)
-      }
-    },
-    [fetchUser, router]
-  )
+      if (!response.ok) throw new Error('Login failed')
+      await fetchUser()
+      router.push('/')
+    } catch (error) {
+      console.error('Login error:', error)
+      throw error
+    } finally {
+      setIsLoading(false)
+    }
+  }, [fetchUser, router])
 
   const logout = useCallback(async () => {
     try {
@@ -93,61 +85,48 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [router])
 
-  const register = useCallback(
-    async (name: string, email: string, password: string) => {
-      try {
-        setIsLoading(true)
-        const response = await fetch('/api/auth/register', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ name, email, password }),
-          credentials: 'include',
-        })
+  const register = useCallback(async (name: string, email: string, password: string) => {
+    try {
+      setIsLoading(true)
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password }),
+        credentials: 'include',
+      })
 
-        if (!response.ok) {
-          throw new Error('Registration failed')
-        }
-
-        await fetchUser()
-        router.push('/')
-      } catch (error) {
-        console.error('Registration error:', error)
-        throw error
-      } finally {
-        setIsLoading(false)
-      }
-    },
-    [fetchUser, router]
-  )
-
-  // Protect routes
-  useEffect(() => {
-    if (isLoading) return
-
-    const isAuthPage = pathname === '/login'
-    const isAdminRoute = pathname.startsWith('/admin')
-
-    if (!user && !isAuthPage) {
-      router.push('/login')
-    } else if (user && isAuthPage) {
+      if (!response.ok) throw new Error('Registration failed')
+      await fetchUser()
       router.push('/')
-    } else if (isAdminRoute && user?.role !== 'admin') {
-      router.push('/')
+    } catch (error) {
+      console.error('Registration error:', error)
+      throw error
+    } finally {
+      setIsLoading(false)
     }
-  }, [user, isLoading, pathname, router])
+  }, [fetchUser, router])
+
+  // 4. Создаем объект значения для провайдера
+  let value = {
+    user,
+    isLoading,
+    login,
+    logout,
+    register
+  }
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, logout, register }}>
+    // 5. Передаем значение в провайдер
+    <AuthContext.Provider (value={value})>
       {children}
     </AuthContext.Provider>
   )
 }
 
+// 6. Создаем хук для использования контекста
 export function useAuth() {
   const context = useContext(AuthContext)
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useAuth must be used within an AuthProvider')
   }
   return context

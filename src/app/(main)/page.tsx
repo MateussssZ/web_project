@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useEffect, useState } from 'react';
 import { ArticleCard } from '@/components/ArticleCard';
 import { Header } from '@/components/Header';
