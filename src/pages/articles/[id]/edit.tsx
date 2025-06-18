@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { Article } from '../../types';
+import { Article } from '../../../types';
+import ArticleForm from '../../../components/ArticleForm';
 
-const ArticleViewPage = () => {
+const EditArticlePage = () => {
   const router = useRouter();
   const { id } = router.query;
   const [article, setArticle] = useState<Article | null>(null);
@@ -27,8 +28,20 @@ const ArticleViewPage = () => {
     }
   }, [id]);
 
+  const handleUpdate = async (updated: { title: string; content: string }) => {
+    await fetch(`/api/articles/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updated),
+    });
+    router.push(`/articles/${id}`);
+  };
+
   if (loading) return <div>Loading...</div>;
   if (!article) return <div>Статья не найдена</div>;
+  if (!canEdit) return <div style={{ color: 'red' }}>У вас нет прав для редактирования этой статьи.</div>;
 
   return (
     <div style={{
@@ -39,32 +52,13 @@ const ArticleViewPage = () => {
       maxWidth: 700,
       margin: '32px auto 0 auto',
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-        <h1 style={{ flex: 1, margin: 0 }}>{article.title}</h1>
-        {canEdit && (
-          <button
-            style={{
-              background: '#0070f3',
-              color: '#fff',
-              border: 'none',
-              borderRadius: 5,
-              padding: '8px 16px',
-              fontWeight: 500,
-              cursor: 'pointer',
-            }}
-            onClick={() => router.push(`/articles/${article.id}/edit`)}
-          >
-            Редактировать
-          </button>
-        )}
-      </div>
-      <div style={{ margin: '32px 0', fontSize: 18, lineHeight: 1.7 }}>
-        {article.content}
-      </div>
+      <h1>Редактировать статью</h1>
+      <ArticleForm article={article} onSubmit={handleUpdate} />
       <button
         type="button"
-        onClick={() => router.back()}
+        onClick={() => router.push(`/articles/${id}`)}
         style={{
+          marginTop: 24,
           background: 'none',
           border: 'none',
           color: '#0070f3',
@@ -75,10 +69,10 @@ const ArticleViewPage = () => {
           textDecoration: 'underline',
         }}
       >
-        ← Назад
+        ← Назад к статье
       </button>
     </div>
   );
 };
 
-export default ArticleViewPage;
+export default EditArticlePage;
