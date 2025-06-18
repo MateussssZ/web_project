@@ -17,6 +17,7 @@ export const initializeDb = async () => {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       title TEXT NOT NULL,
       content TEXT NOT NULL,
+      user_id INTEGER NOT NULL,
       created_at TEXT NOT NULL
     );
     CREATE TABLE IF NOT EXISTS users (
@@ -28,9 +29,12 @@ export const initializeDb = async () => {
   `);
 };
 
-export const createArticle = async (title: string, content: string) => {
+export const createArticle = async (title: string, content: string, userId: number) => {
   const db = await getDb();
-  const result = await db.run('INSERT INTO articles (title, content) VALUES (?, ?)', [title, content]);
+  const result = await db.run(
+    'INSERT INTO articles (title, content, user_id) VALUES (?, ?, ?)',
+    [title, content, userId]
+  );
   return result.lastID;
 };
 

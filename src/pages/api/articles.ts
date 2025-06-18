@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getArticles, getArticleById, createArticle, updateArticle, deleteArticle } from '../../db/index';
+import { parse } from 'cookie';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     switch (req.method) {
@@ -22,8 +23,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 res.status(400).json({ message: 'Title and content are required' });
                 return;
             }
-            const newArticleId = await createArticle(title, content);
-            res.status(201).json({ id: newArticleId, title, content });
+            const cookies = req.headers.cookie ? parse(req.headers.cookie) : {};
+            const userId = Number(cookies.user);
+            if (!userId) {
+                res.status(401).json({ message: 'Unauthorized' });
+                return;
+            }
+            const newArticleId = await createArticle(title, content, userId);
+            res.status(201).json({ id: newArticleId, title, content, user_id: userId });
             break;
         // case 'PUT':
         //     const updatedArticle = await updateArticle(Number(req.query.id), req.body);
