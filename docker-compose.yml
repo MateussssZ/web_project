@@ -1,0 +1,11 @@
+version: '3.8'
+services:
+  web:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./data:/data
+      - ./db.sql:/app/db.sql
+    environment:
+      - SQLITE_PATH=/data/database.sqlite
