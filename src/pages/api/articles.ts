@@ -23,7 +23,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 return;
             }
             const newArticleId = await createArticle(title, content);
-            res.status(201).json({ id: newArticleId, title, content });
+            res.status(201).json({ id: newArticleId, createdAt: new Date(), title, content});
             break;
         // case 'PUT':
         //     const updatedArticle = await updateArticle(Number(req.query.id), req.body);

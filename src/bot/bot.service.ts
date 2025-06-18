@@ -35,7 +35,9 @@ export class BotService {
     createdAt: Date;
     url: string;
   }) {
+    console.log("NOTIFY")
     if (this.activeChats.size === 0) return;
+    console.log("NOTIFY2")
 
     const message = BOT_MESSAGES.newArticle(notification);
     const errors: number[] = [];
@@ -45,6 +47,8 @@ export class BotService {
         await this.bot.api.sendMessage(chatId, message, {
           parse_mode: 'Markdown',
         });
+            console.log("NOTIFY3")
+
       } catch (error) {
         console.error(`Failed to notify chat ${chatId}:`, error);
         errors.push(chatId);

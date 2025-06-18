@@ -22,14 +22,12 @@ const NewArticle = () => {
           const res = await response.json()
           await bot.notifyNewArticle({
             title: articleData.title,
-            createdAt: res.createdAt,
+            createdAt: res.createdAt.toString(),
             url: `${process.env.NEXT_PUBLIC_WEB_APP_URL}/article/${res.id}`
           });
     } catch (error) {
       console.error('Failed to send Telegram notification:', error);
     }
-  } else{
-    console.log("No bot")
   }
       router.push('/');
     } else {
