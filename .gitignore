@@ -18,6 +18,8 @@ out/
 database.sqlite
 *.sqlite
 *.db
+db.sql
+
 
 # VSCode
 .vscode/
