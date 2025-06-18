@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import ArticleForm from '../../components/ArticleForm';
+import { bot } from '@/bot/bot.init';
 
 const NewArticle = () => {
   const router = useRouter();
@@ -16,6 +17,18 @@ const NewArticle = () => {
     });
 
     if (response.ok) {
+      if (bot) {
+        try {
+          const res = await response.json()
+          await bot.notifyNewArticle({
+            title: articleData.title,
+            createdAt: res.createdAt,
+            url: `${process.env.NEXT_PUBLIC_WEB_APP_URL}/article/${res.id}`
+          });
+    } catch (error) {
+      console.error('Failed to send Telegram notification:', error);
+    }
+  }
       router.push('/');
     } else {
       const errorData = await response.json();
