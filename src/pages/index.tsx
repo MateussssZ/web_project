@@ -1,38 +1,30 @@
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 import ArticleList from '../components/ArticleList';
 
 const Home = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate loading state
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 1000);
+    }, 600);
     return () => clearTimeout(timer);
   }, []);
 
   return (
-    <div style={{ padding: '20px', maxWidth: '600px', margin: 'auto' }}>
-      <h1 style={{ textAlign: 'center' }}>Articles</h1>
-      <Link
-        href="/articles/new"
-        style={{
-          display: 'block',
-          margin: '20px 0',
-          textAlign: 'center',
-          padding: '10px',
-          backgroundColor: '#0070f3',
-          color: '#fff',
-          borderRadius: '5px',
-          textDecoration: 'none'
-        }}
-      >
-        Create New Article
-      </Link>
+    <div
+      style={{
+        padding: '32px 12px',
+        maxWidth: '700px',
+        margin: 'auto',
+        background: '#f5f6fa',
+        minHeight: '100vh',
+        borderRadius: 12,
+        boxShadow: '0 2px 12px rgba(0,0,0,0.03)',
+      }}
+    >
       {loading ? (
-        <p>Loading articles...</p>
+        <p style={{ textAlign: 'center', color: '#888', fontSize: 18 }}>Loading articles...</p>
       ) : (
         <ArticleList />
       )}
