@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  admin-dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3000"
+    depends_on:
+      - database
+    environment:
+      - DATABASE_URL=sqlite:///data/database.sqlite
+    volumes:
+      - ./data:/data
+
+  database:
+    image: nouchka/sqlite3
+    volumes:
+      - ./data:/data
+    environment:
+      - SQLITE_DATABASE=/data/database.sqlite
+      - SQLITE_USER=admin
+      - SQLITE_PASSWORD=admin123
+    ports:
+      - "8080:8080"
