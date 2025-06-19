@@ -3,7 +3,7 @@ import { open } from 'sqlite';
 import fs from 'fs';
 import path from 'path';
 
-const dbPath = process.env.SQLITE_PATH || '/data/database.sqlite';
+const dbPath = process.env.SQLITE_PATH || path.resolve(process.cwd(), 'data/database.sqlite');
 
 const dbPromise = open({
   filename: dbPath,

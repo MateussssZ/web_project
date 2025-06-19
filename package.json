@@ -8,13 +8,10 @@
     "start": "next start"
   },
   "dependencies": {
-<<<<<<< HEAD
     "dotenv": "^16.5.0",
     "grammy": "^1.36.3",
-=======
     "bcryptjs": "^3.0.2",
     "cookie": "^1.0.2",
->>>>>>> e93b8e3 (1)
     "next": "latest",
     "react": "latest",
     "react-dom": "latest",
@@ -23,17 +20,10 @@
     "typescript": "^4.0.0"
   },
   "devDependencies": {
-<<<<<<< HEAD
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
-    "ts-node": "^10.0.0"
-  }
-=======
-    "@types/node": "^24.0.3",
-    "@types/react": "^17.0.0",
-    "@types/react-dom": "^17.0.0",
-    "ts-node": "^10.0.0"
+    "ts-node": "^10.0.0",
+    "@types/node": "^24.0.3"
   },
   "middleware": "src/middleware.ts"
->>>>>>> e93b8e3 (1)
 }
