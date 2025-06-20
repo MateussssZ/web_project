@@ -1,5 +1,5 @@
 import { Bot } from "grammy";
-import { BOT_MESSAGES } from "../constants/bot.constants";
+import { BOT_MESSAGES } from "./bot.constants";
 
 export const registerStartCommand = (bot: Bot) => {
   bot.command('start', async (ctx) => {
@@ -11,7 +11,7 @@ export const registerStartCommand = (bot: Bot) => {
             [
               { 
                 text: '🌐 Open Web App', 
-                url: process.env.NEXT_PUBLIC_WEB_APP_URL || 'https://example.com' 
+                url: process.env.WEB_APP_URL || 'https://example.com' 
               }
             ]
           ]

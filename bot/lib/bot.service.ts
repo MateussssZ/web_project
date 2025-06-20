@@ -1,6 +1,6 @@
 import { Bot } from "grammy";
-import { registerStartCommand } from "./commands/start.commands";
-import { BOT_MESSAGES } from "./constants/bot.constants";
+import { registerStartCommand } from "./start.commands";
+import { BOT_MESSAGES } from "./bot.constants";
 
 export class BotService {
   private bot: Bot;
