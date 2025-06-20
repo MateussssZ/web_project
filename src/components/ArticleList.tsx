@@ -1,70 +1,79 @@
-import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Article } from '../types';
+import { useEffect, useState } from 'react';
 
-const ArticleList: React.FC = () => {
-    const [articles, setArticles] = useState<Article[]>([]);
+const CARD_BG = '#23272b';
+const BORDER = '#2e3237';
+const TEXT = '#e6e6e6';
+const ICON = 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f4d5.svg'; // минималистичная иконка книги
 
-    useEffect(() => {
-        const fetchArticles = async () => {
-            const response = await fetch('/api/articles');
-            const data = await response.json();
-            setArticles(data);
-        };
+const ArticleList = () => {
+  const [articles, setArticles] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-        fetchArticles();
-    }, []);
+  useEffect(() => {
+    fetch('/api/articles')
+      .then(res => res.json())
+      .then(data => {
+        setArticles(data);
+        setLoading(false);
+      });
+  }, []);
 
-    return (
-        <div>
-            <h1 style={{ textAlign: 'center', marginBottom: 24 }}>Articles</h1>
-            <Link
-                href="/articles/new"
-                style={{
-                    display: 'inline-block',
-                    margin: '0 auto 24px auto',
-                    padding: '10px 24px',
-                    background: '#0070f3',
-                    color: '#fff',
-                    borderRadius: 6,
-                    textDecoration: 'none',
-                    fontWeight: 500,
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
-                    transition: 'background 0.2s'
-                }}
-            >
-                + New Article
-            </Link>
-            <ul style={{ listStyle: 'none', padding: 0, marginTop: 32 }}>
-                {articles.map(article => (
-                    <li
-                        key={article.id}
-                        style={{
-                            marginBottom: 18,
-                            background: '#fafbfc',
-                            borderRadius: 6,
-                            boxShadow: '0 1px 4px rgba(0,0,0,0.03)',
-                            padding: '18px 20px',
-                            transition: 'box-shadow 0.2s',
-                        }}
-                    >
-                        <Link
-                            href={`/articles/${article.id}`}
-                            style={{
-                                color: '#222',
-                                fontSize: 20,
-                                fontWeight: 600,
-                                textDecoration: 'none',
-                                transition: 'color 0.2s'
-                            }}
-                        >
-                            {article.title}
-                        </Link>
-                    </li>
-                ))}
-            </ul>
-        </div>
-    );
+  if (loading) return null;
+
+  // Новые статьи сверху
+  const articlesToShow = [...articles].reverse();
+
+  return (
+    <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+      {articlesToShow.map(article => (
+        <li
+          key={article.id}
+          style={{
+            marginBottom: 18,
+            background: CARD_BG,
+            borderRadius: 8,
+            boxShadow: '0 1px 6px rgba(0,0,0,0.10)',
+            padding: '16px 22px',
+            border: `1px solid ${BORDER}`,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 18,
+            transition: 'box-shadow 0.2s, background 0.2s',
+            cursor: 'pointer',
+            animation: 'fadeInUp 0.5s',
+          }}
+        >
+          {/* Минималистичная 2D иконка-документ SVG */}
+          <span style={{ display: 'flex', alignItems: 'center', marginRight: 8 }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <rect x="4" y="3" width="16" height="18" rx="3" fill="none" stroke="#6abf4b" strokeWidth="2"/>
+              <line x1="7" y1="8" x2="17" y2="8" stroke="#6abf4b" strokeWidth="1.5" strokeLinecap="round"/>
+              <line x1="7" y1="12" x2="17" y2="12" stroke="#6abf4b" strokeWidth="1.5" strokeLinecap="round"/>
+              <line x1="7" y1="16" x2="13" y2="16" stroke="#6abf4b" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
+          </span>
+          <Link href={`/articles/${article.id}`} legacyBehavior>
+            <a style={{
+              color: TEXT,
+              fontSize: 20,
+              fontWeight: 700,
+              textDecoration: 'none',
+              transition: 'color 0.2s'
+            }}>
+              {article.title}
+            </a>
+          </Link>
+        </li>
+      ))}
+      <style jsx>{`
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(20px);}
+          to { opacity: 1; transform: translateY(0);}
+        }
+      `}</style>
+    </ul>
+  );
 };
 
 export default ArticleList;
