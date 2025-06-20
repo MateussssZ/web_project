@@ -1,9 +1,11 @@
+// filepath: /admin-dashboard/admin-dashboard/src/db/index.ts
 import { Database } from 'sqlite3';
 import { open } from 'sqlite';
-import fs from 'fs';
 import path from 'path';
+import fs from 'fs';
 
-const dbPath = process.env.SQLITE_PATH || path.resolve(process.cwd(), 'data/database.sqlite');
+// Используем переменную окружения или дефолтный путь
+const dbPath = process.env.SQLITE_PATH || '../data/database.sqlite';
 
 const dbPromise = open({
   filename: dbPath,
@@ -14,12 +16,14 @@ export const getDb = async () => {
   return dbPromise;
 };
 
+// Добавьте эту функцию для инициализации схемы, если нужно
 export const initializeDb = async () => {
   const db = await getDb();
-  // Читаем схему из db.sql
-  const schemaPath = path.resolve(process.cwd(), 'db.sql');
-  const schema = fs.readFileSync(schemaPath, 'utf-8');
-  await db.exec(schema);
+  const schemaPath = process.env.DB_SCHEMA_PATH || path.resolve(process.cwd(), 'db.sql');
+  if (fs.existsSync(schemaPath)) {
+    const schema = fs.readFileSync(schemaPath, 'utf-8');
+    await db.exec(schema);
+  }
 };
 
 export const createArticle = async (title: string, content: string, userId: number) => {

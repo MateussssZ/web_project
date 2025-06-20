@@ -1,8 +1,10 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getArticles, getArticleById, createArticle, updateArticle, deleteArticle } from '../../db/index';
+import { getArticles, getArticleById, createArticle } from '../../db/index';
+import { initializeDb } from '../../db/index';
 import { parse } from 'cookie';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+    await initializeDb();
     switch (req.method) {
         case 'GET':
             if (req.query.id) {
@@ -30,7 +32,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 return;
             }
             const newArticleId = await createArticle(title, content, userId);
-            res.status(201).json({ id: newArticleId, title, content, user_id: userId });
+            res.status(201).json({ id: newArticleId,createdAt: new Date(), title, content, user_id: userId });
             break;
         // case 'PUT':
         //     const updatedArticle = await updateArticle(Number(req.query.id), req.body);

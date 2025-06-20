@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import ArticleForm from '../../components/ArticleForm';
 import { Article } from '../../types';
 
 const ArticleViewPage = () => {
@@ -14,6 +16,10 @@ const ArticleViewPage = () => {
       const fetchArticle = async () => {
         const response = await fetch(`/api/articles/${id}`);
         const data = await response.json();
+        // Ensure user_id is present in the fetched data
+        if (!('user_id' in data)) {
+          throw new Error('Fetched article is missing user_id');
+        }
         setArticle(data);
 
         // Проверяем user_id
@@ -26,6 +32,23 @@ const ArticleViewPage = () => {
       fetchArticle();
     }
   }, [id]);
+
+  const handleUpdate = async (data: { title: string; content: string }) => {
+    if (!article) return;
+    const updatedArticle: Article = {
+      ...article,
+      title: data.title,
+      content: data.content,
+    };
+    await fetch(`/api/articles/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updatedArticle),
+    });
+    router.push('/');
+  };
 
   if (loading) return <div>Loading...</div>;
   if (!article) return <div>Статья не найдена</div>;
