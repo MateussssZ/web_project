@@ -1,0 +1,22 @@
+<!-- filepath: /home/max/repos/a/web_project/admin-dashboard/src/views/edit.ejs -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Редактировать статью</title>
+</head>
+<body>
+  <h1>Редактировать статью</h1>
+  <form action="/articles/<%= article.id %>/edit" method="POST">
+    <div>
+      <label>Заголовок</label><br>
+      <input type="text" name="title" value="<%= article.title %>" required>
+    </div>
+    <div>
+      <label>Контент</label><br>
+      <textarea name="content" rows="8" required><%= article.content %></textarea>
+    </div>
+    <button type="submit">Сохранить</button>
+  </form>
+  <a href="/">Назад</a>
+</body>
+</html>

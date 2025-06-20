@@ -1,0 +1,29 @@
+<!-- filepath: /home/max/repos/a/web_project/admin-dashboard/src/views/dashboard.ejs -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Dashboard</title>
+</head>
+<body>
+  <h1>Статьи</h1>
+  <table border="1" cellpadding="8">
+    <tr>
+      <th>ID</th>
+      <th>Заголовок</th>
+      <th>Действия</th>
+    </tr>
+    <% articles.forEach(article => { %>
+      <tr>
+        <td><%= article.id %></td>
+        <td><%= article.title %></td>
+        <td>
+          <a href="/articles/<%= article.id %>/edit">Редактировать</a>
+          <form action="/articles/<%= article.id %>/delete" method="POST" style="display:inline;">
+            <button type="submit" onclick="return confirm('Удалить статью?')">Удалить</button>
+          </form>
+        </td>
+      </tr>
+    <% }) %>
+  </table>
+</body>
+</html>
