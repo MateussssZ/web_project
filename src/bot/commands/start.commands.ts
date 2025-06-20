@@ -11,7 +11,7 @@ export const registerStartCommand = (bot: Bot) => {
             [
               { 
                 text: '🌐 Open Web App', 
-                url: process.env.WEB_APP_URL || 'https://example.com' 
+                url: process.env.NEXT_PUBLIC_WEB_APP_URL || 'https://example.com' 
               }
             ]
           ]
